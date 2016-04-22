@@ -36,8 +36,20 @@ public class LightWebViewClient extends WebViewClient {
     public void onLoadResource(final WebView view, final String url) {
         super.onLoadResource(view, url);
 
+        shouldParseJs(view, url);
+    }
+
+    @Override
+    public boolean shouldOverrideUrlLoading(WebView view, String url) {
+        if (shouldParseJs(view, url)) {
+            return true;
+        }
+        return super.shouldOverrideUrlLoading(view, url);
+    }
+
+    private boolean shouldParseJs(final WebView view, final String url){
         if (!url.startsWith(Constants.SCHEMA_HOST)) {
-            return;
+            return false;
         }
 
         try {
@@ -52,6 +64,7 @@ public class LightWebViewClient extends WebViewClient {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return true;
     }
 
     private void process(WebView view, String url) {
